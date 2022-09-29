@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Aireuropa/resec/resec/redis"
-	"github.com/Aireuropa/resec/resec/state"
+	"github.com/aireuropa/resec/resec/redis"
+	"github.com/aireuropa/resec/resec/state"
 	consulapi "github.com/hashicorp/consul/api"
 	"github.com/jpillora/backoff"
 	log "github.com/sirupsen/logrus"

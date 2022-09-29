@@ -1,6 +1,6 @@
 package consul
 
-import "github.com/Aireuropa/resec/resec/state"
+import "github.com/aireuropa/resec/resec/state"
 
 // list of commands the Consul connection can handle
 const (

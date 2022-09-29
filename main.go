@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Aireuropa/resec/resec/reconciler"
+	"github.com/aireuropa/resec/resec/reconciler"
 	gelf "github.com/seatgeek/logrus-gelf-formatter"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"

@@ -9,9 +9,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/Aireuropa/resec/resec/consul"
-	"github.com/Aireuropa/resec/resec/redis"
-	"github.com/Aireuropa/resec/resec/state"
+	"github.com/aireuropa/resec/resec/consul"
+	"github.com/aireuropa/resec/resec/redis"
+	"github.com/aireuropa/resec/resec/state"
 	"github.com/bep/debounce"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/d4l3k/messagediff.v1"

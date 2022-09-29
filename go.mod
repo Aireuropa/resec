@@ -1,4 +1,4 @@
-module github.com/Aireuropa/resec
+module github.com/aireuropa/resec
 
 go 1.18
 

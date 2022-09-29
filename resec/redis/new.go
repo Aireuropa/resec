@@ -3,7 +3,7 @@ package redis
 import (
 	"time"
 
-	"github.com/Aireuropa/resec/resec/state"
+	"github.com/aireuropa/resec/resec/state"
 	"github.com/go-redis/redis"
 	"github.com/jpillora/backoff"
 	log "github.com/sirupsen/logrus"

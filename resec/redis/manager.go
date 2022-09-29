@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Aireuropa/resec/resec/state"
+	"github.com/aireuropa/resec/resec/state"
 	"github.com/go-redis/redis"
 )
 

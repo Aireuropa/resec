@@ -1,6 +1,6 @@
 # Build layer
 FROM golang:1.18 AS builder
-WORKDIR /go/src/github.com/Aireuropa/resec
+WORKDIR /go/src/github.com/aireuropa/resec
 COPY . .
 ARG RESEC_VERSION
 ENV RESEC_VERSION ${RESEC_VERSION:-local-dev}
@@ -11,5 +11,5 @@ RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-X 'main.Version=${RESEC_VERSION
 FROM alpine:latest
 RUN apk --no-cache add ca-certificates
 WORKDIR /root/
-COPY --from=builder /go/src/github.com/Aireuropa/resec/build/resec .
+COPY --from=builder /go/src/github.com/aireuropa/resec/build/resec .
 CMD ["./resec"]
