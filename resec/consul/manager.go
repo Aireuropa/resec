@@ -4,8 +4,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Aireuropa/resec/resec/state"
 	consulapi "github.com/hashicorp/consul/api"
-	"github.com/seatgeek/resec/resec/state"
 )
 
 // emit will emit a consul state change to the reconciler

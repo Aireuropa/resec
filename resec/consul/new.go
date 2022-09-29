@@ -7,10 +7,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Aireuropa/resec/resec/redis"
+	"github.com/Aireuropa/resec/resec/state"
 	consulapi "github.com/hashicorp/consul/api"
 	"github.com/jpillora/backoff"
-	"github.com/seatgeek/resec/resec/redis"
-	"github.com/seatgeek/resec/resec/state"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )

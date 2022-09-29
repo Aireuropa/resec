@@ -5,8 +5,8 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/seatgeek/resec/resec/consul"
-	"github.com/seatgeek/resec/resec/redis"
+	"github.com/Aireuropa/resec/resec/consul"
+	"github.com/Aireuropa/resec/resec/redis"
 	"github.com/urfave/cli/v2"
 )
 

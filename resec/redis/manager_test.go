@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/seatgeek/resec/resec/state"
+	"github.com/Aireuropa/resec/resec/state"
 	"github.com/stretchr/testify/assert"
 )
 

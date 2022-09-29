@@ -1,6 +1,6 @@
 package redis
 
-import "github.com/seatgeek/resec/resec/state"
+import "github.com/Aireuropa/resec/resec/state"
 
 const (
 	StartCommand       = CommandName("start")

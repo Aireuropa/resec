@@ -1,4 +1,4 @@
-module github.com/seatgeek/resec
+module github.com/Aireuropa/resec
 
 go 1.18
 
