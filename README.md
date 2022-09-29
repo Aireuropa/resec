@@ -40,6 +40,21 @@ There are 2 options to work with services:
 
 If redis becomes unhealthy resec will stop the leader election. As soon as redis will become healthy again, resec will start the operation from the beginning.
 
+### State interface and health check
+
+You can activate the state interface with `STATE_SERVER`.
+With this you can access the internal states of resec and the info output of the associated redis instance over http.
+
+```
+/        Overview page
+/state   combined states as json
+/info    info output from redis
+/health  health check
+```
+
+Additionally, an healthcheck endpoint is exposed under `/health`. It switches from "fail"/503 to "ok"/200 after the redis instance is synced with the cluster and ready to serve.
+This can be used for deployment automation. See [examples](./example) for a Nomadconfig that uses this.
+
 ## Usage
 
 ### Environment variables
@@ -47,6 +62,8 @@ If redis becomes unhealthy resec will stop the leader election. As soon as redis
 Environment Variables |  Default       | Description
 ----------------------| ---------------| -------------------------------------------------
 ANNOUNCE_ADDR         |                | IP:Port of Redis to be announced, by default service will be registered wi
+CONSUL_HTTP_ADDR      |                | Consul address
+CONSUL_HTTP_TOKEN     |                | Consul ACL token
 CONSUL_SERVICE_NAME   |                | Consul service name for tag based service discovery
 CONSUL_SERVICE_PREFIX | redis          | Name Prefix, will be followed by "-(master/slave)", ignored if CONSUL_SERVICE_NAME is used
 CONSUL_LOCK_KEY       | resec/.lock    | KV lock location, should be overriden if multiple instances running in the same consul DC
@@ -61,6 +78,8 @@ HEALTHCHECK_INTERVAL  | 5s             |
 HEALTHCHECK_TIMEOUT   | 2s             |
 REDIS_ADDR            | 127.0.0.1:6379 |
 REDIS_PASSWORD        |                |
+STATE_SERVER          | False          | Activates simple web server for internal state and health check
+STATE_LISTEN_ADDR     | 0.0.0.0:8080   |
 LOG_LEVEL             | INFO           | Options are "DEBUG", "INFO", "WARN", "ERROR"
 LOG_FORMAT            | text           | Options are "text", "json", "gelf"
 
@@ -92,80 +111,8 @@ service "" {
 Please see [the local development guide](https://github.com/seatgeek/resec/blob/master/DEV.md) for information and hints on how to work with Resec locally
 
 ### Run the application
-* with Nomad (version 1.0+)
 
-```hcl
-job "resec" {
-  datacenters = ["dc1"]
-  type        = "service"
-
-  update {
-    max_parallel = 1
-    stagger      = "10s"
-  }
-
-  group "cache" {
-    count = 3
-
-    network {
-      port "db" {
-        to = 6379
-      }
-    }
-
-    task "redis" {
-      driver = "docker"
-
-      config {
-        image          = "redis:alpine"
-        auth_soft_fail = true
-
-        command = "redis-server"
-
-        args = [
-          "/local/redis.conf"
-        ]
-
-        ports = ["db"]
-      }
-
-      // Let Redis know how much memory he can use not to be killed by OOM
-      template {
-        data        = <<EORC
-maxmemory {{ env "NOMAD_MEMORY_LIMIT" | parseInt | subtract 16 }}mb
-EORC
-        destination = "local/redis.conf"
-      }
-
-      resources {
-        cpu    = 500
-        memory = 256
-      }
-    }
-
-    task "resec" {
-      driver = "docker"
-
-      config {
-        image          = "seatgeek/resec"
-        auth_soft_fail = true
-      }
-
-      env {
-        CONSUL_HTTP_ADDR = "http://${attr.unique.network.ip-address}:8500"
-        REDIS_ADDR       = "${NOMAD_ADDR_db}"
-      }
-
-      resources {
-        cpu    = 100
-        memory = 64
-      }
-    }
-  }
-}
-```
-
-* with Nomad (version < 1.0):
+* with Nomad (look into [examples](./example) for a more complex Nomadfile):
 
 ```hcl
 job "resec" {
