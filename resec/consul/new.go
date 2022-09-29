@@ -72,10 +72,12 @@ func NewConnection(c *cli.Context, redisConfig redis.Config) (*Manager, error) {
 	if err != nil {
 		return nil, fmt.Errorf("Trouble extracting port number from [%s]", redisConfig.Address)
 	}
-	
-	consulConfig.announceHost = announceHost
-	consulConfig.announcePort = strconv.Atoi(announcePort)
 
+	consulConfig.announceHost = announceHost
+	consulConfig.announcePort, err = strconv.Atoi(announcePort)
+	if err != nil {
+		return nil, fmt.Errorf("Error in Atoi conversion [%s]: %s", announcePort, err.Error())
+	}
 	instance := &Manager{
 		backoff: &backoff.Backoff{
 			Min:    50 * time.Millisecond,
