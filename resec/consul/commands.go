@@ -4,12 +4,13 @@ import "github.com/aireuropa/resec/resec/state"
 
 // list of commands the Consul connection can handle
 const (
-	StartCommand             = CommandName("start")
-	StopConsulCommand        = CommandName("stop")
-	RegisterServiceCommand   = CommandName("register_service")
-	DeregisterServiceCommand = CommandName("deregister_service")
-	UpdateServiceCommand     = CommandName("update_service")
-	ReleaseLockCommand       = CommandName("release_lock")
+	StartCommand                 = CommandName("start")
+	StopConsulCommand            = CommandName("stop")
+	RegisterServiceCommand       = CommandName("register_service")
+	DeregisterServiceCommand     = CommandName("deregister_service")
+	DeregisterMultiMasterCommand = CommandName("deregister_multimaster")
+	UpdateServiceCommand         = CommandName("update_service")
+	ReleaseLockCommand           = CommandName("release_lock")
 )
 
 // CommandName is a special string type

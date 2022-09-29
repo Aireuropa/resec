@@ -28,6 +28,7 @@ const (
 	ResultRunAsSlave           = resultType("run_as_slave")
 	ResultUnknown              = resultType("unknown")
 	ResultUpdateService        = resultType("consul_update_service")
+	ResultMultiMaster          = resultType("consul_multi_master_detected")
 )
 
 type resultType string
@@ -180,6 +181,9 @@ func (r *Reconciler) apply(state resultType) {
 	case ResultMasterLinkDown:
 		r.logger.Warn("Master link is down, can't serve traffic")
 		r.sendConsulCommand(consul.DeregisterServiceCommand)
+	case ResultMultiMaster:
+		r.logger.Warn("Detected multiple masters trying to unregister")
+		r.sendConsulCommand(consul.DeregisterMultiMasterCommand)
 
 	default:
 		r.logger.Errorf("Unknown state: %s", state)
@@ -208,6 +212,11 @@ func (r *Reconciler) evaluate() resultType {
 	// option is to step down as leader (if we are) and remove our Consul service
 	if r.redisState.IsUnhealthy() {
 		return ResultRedisNotHealthy
+	}
+
+	// If there's multiplemaster detected on the catalog, we need to unregister one.
+	if r.consulState.IsMultiMaster() {
+		return ResultMultiMaster
 	}
 
 	// if the Consul Lock is held (aka this instance should be master)

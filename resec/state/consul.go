@@ -2,12 +2,19 @@ package state
 
 // Consul state used by the reconciler to decide what actions to take
 type Consul struct {
-	Ready      bool
-	Healthy    bool
-	Master     bool
-	MasterAddr string
-	MasterPort int
-	Stopped    bool
+	Ready          bool
+	Healthy        bool
+	Master         bool
+	MasterAddr     string
+	MasterPort     int
+	Stopped        bool
+	MasterServices []ConsulService
+}
+
+type ConsulService struct {
+	Address   string
+	Port      int
+	ServiceID string
 }
 
 // NoMasterElected return whether any Consul elected Redis master exist
@@ -29,4 +36,8 @@ func (c *Consul) IsMaster() bool {
 // if its *not* hold, the Reids under management should become slave
 func (c *Consul) IsSlave() bool {
 	return c.Master == false
+}
+
+func (c *Consul) IsMultiMaster() bool {
+	return len(c.MasterServices) > 1
 }

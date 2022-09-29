@@ -252,6 +252,17 @@ func (m *Manager) deregisterService() {
 	m.config.checkID = ""
 }
 
+// deregisterService will deregister the consul service from Consul catalog
+func (m *Manager) deregisterMultiMasterService(redisState state.Redis) {
+	for _, service := range m.state.MasterServices {
+		// TODO only deregister the wrong one
+		m.logger.Info("Deregistering %s:%d, %s", service.Address, service.Port, service.ServiceID)
+		err := m.client.ServiceDeregister(service.ServiceID)
+		m.handleConsulError(err)
+	}
+
+}
+
 // setConsulCheckStatus sets consul status check TTL and output
 func (m *Manager) setConsulCheckStatus(redisState state.Redis) {
 	if m.config.checkID == "" {
@@ -320,6 +331,8 @@ func (m *Manager) watchConsulMasterService() {
 
 			if len(services) > 1 {
 				m.logger.Error("More than 1 (healthy) master service found in Consul catalog")
+				m.state.MasterServices = m.GetMasterServices(services)
+				m.emit()
 				continue
 			}
 
@@ -342,6 +355,24 @@ func (m *Manager) watchConsulMasterService() {
 			m.emit()
 		}
 	}
+}
+
+// GetMasterServices
+func (m *Manager) GetMasterServices(services []*consulapi.ServiceEntry) []state.ConsulService {
+	css := []state.ConsulService{}
+	for _, service := range services {
+		var cs state.ConsulService
+
+		if service.Service.Address != "" {
+			cs.Address = service.Service.Address
+		} else {
+			cs.Address = service.Node.Address
+		}
+		cs.Port = service.Service.Port
+		cs.ServiceID = service.Service.ID
+		css = append(css, cs)
+	}
+	return css
 }
 
 // handleConsulError is the error handler
@@ -406,6 +437,9 @@ func (m *Manager) CommandRunner() {
 
 			case StopConsulCommand:
 				m.cleanup()
+
+			case DeregisterMultiMasterCommand:
+				m.deregisterMultiMasterService(payload.redisState)
 			}
 		}
 	}
