@@ -10,10 +10,7 @@ import (
 	gelf "github.com/seatgeek/logrus-gelf-formatter"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
-
-	"github.com/opentracing/opentracing-go"
-	datadogOpentracer "gopkg.in/DataDog/dd-trace-go.v1/ddtrace/opentracer"
-	datadogTracer "gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
+	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 )
 
 var Version = "local-dev"
@@ -21,7 +18,12 @@ var Version = "local-dev"
 func main() {
 	if os.Getenv("DD_SERVICE") != "" {
 		var serviceName = os.Getenv("DD_SERVICE")
-		opentracing.SetGlobalTracer(datadogOpentracer.New(datadogTracer.WithService(serviceName)))
+		//opentracing.SetGlobalTracer(datadogOpentracer.New(datadogTracer.WithService(serviceName)))
+		tracer.Start(
+			tracer.WithService(serviceName),
+		)
+		defer tracer.Stop()
+
 	}
 
 	app := cli.NewApp()
