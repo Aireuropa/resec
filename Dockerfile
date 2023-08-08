@@ -8,7 +8,7 @@ RUN echo $RESEC_VERSION
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-X 'main.Version=${RESEC_VERSION}'" -a -installsuffix cgo -o build/resec  .
 
 # Run layer
-FROM alpine:latest
+FROM alpine:3.18.3
 RUN apk --no-cache add ca-certificates && \
 export exe=`exec 2>/dev/null; readlink "/proc/$$/exe"| rev | cut  -f 1 -d '/' | rev` && \
 case "$exe" in \
